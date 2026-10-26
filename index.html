@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Hub - Secure Script & Item Market</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            900: '#164e63',
+                            accent: '#38bdf8'
+                        },
+                        dark: {
+                            bg: '#05070a',
+                            card: '#0d1117',
+                            border: '#1f2937',
+                            hover: '#161b22'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Anti-Inspection & Protection Styling */
+        * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-user-drag: none !important;
+        }
+
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+        }
+
+        body {
+            background-color: #05070a;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glass-panel {
+            background: rgba(13, 17, 23, 0.88);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(13, 17, 23, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -8px rgba(56, 189, 248, 0.25);
+        }
+
+        .neon-glow-text {
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc, #38bdf8);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFade 4s ease infinite, neonPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientFade {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes neonPulse {
+            0% { filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.4)); }
+            100% { filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.9)); }
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0891b2 0%, #0284c7 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px 0 rgba(2, 132, 199, 0.4);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #05070a; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white relative">
+
+    <!-- ARKA PLAN SİYAH HAREKETLİ PARTİKÜL CANVASI -->
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="main-app-container" class="relative z-10 flex flex-col min-h-screen justify-between">
+        
+        <!-- BİLDİRİM BARI -->
+        <div class="bg-gradient-to-r from-dark-bg via-brand-900/60 to-dark-bg border-b border-dark-border/50 text-white text-xs font-semibold py-2 px-4 text-center tracking-wide flex items-center justify-center space-x-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1"></span>
+            <span>FLEX OFFICIAL ENGINE - KORUMALI & AKILLI DOĞRULAMALI GÜVENLİ MAĞAZA</span>
+        </div>
+
+        <!-- HEADER / NAVBAR -->
+        <header class="sticky top-0 z-40 glass-panel border-b border-dark-border">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    
+                    <!-- LOGO & MAVİ TİK -->
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="switchCategory('scripts')">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                            <i class="fa-solid fa-shield-halved text-white text-xl"></i>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-3xl font-black tracking-wider text-white font-display neon-glow-text">FLEX</span>
+                            <span class="ml-2 text-brand-accent text-xl" title="Onaylı Mağaza (Mavi Tik)">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- KATEGORİ SEÇENEKLERİ -->
+                    <nav class="flex items-center space-x-2 bg-dark-bg/90 p-1.5 rounded-2xl border border-dark-border">
+                        <button id="tab-scripts" onclick="switchCategory('scripts')" class="tab-btn active flex items-center px-5 py-2.5 rounded-xl font-semibold text-sm transition">
+                            <i class="fa-solid fa-terminal mr-2"></i> Script'ler
+                        </button>
+                        <button id="tab-items" onclick="switchCategory('items')" class="tab-btn flex items-center px-5 py-2.5 rounded-xl font-semibold text-sm text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-cubes mr-2"></i> Item'lar
+                        </button>
+                    </nav>
+
+                    <!-- KULLANICI / HESAP BARI -->
+                    <div class="flex items-center space-x-3">
+                        <div id="user-info-bar" class="hidden flex items-center space-x-3">
+                            <div class="bg-dark-bg/90 border border-dark-border rounded-xl px-3.5 py-1.5 flex items-center space-x-2 shadow-inner">
+                                <i class="fa-solid fa-wallet text-brand-accent"></i>
+                                <span class="text-xs text-gray-400 font-medium">Bakiye:</span>
+                                <span id="user-balance-display" class="font-bold text-emerald-400 text-sm">₺0.00</span>
+                                <button onclick="openDepositModal()" class="ml-2 bg-brand-600/30 hover:bg-brand-600/60 text-brand-accent p-1.5 rounded-lg transition" title="Bakiye Yükle">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                </button>
+                            </div>
+
+                            <div class="relative inline-block text-left">
+                                <button onclick="toggleUserMenu()" class="flex items-center space-x-2 bg-dark-bg/90 border border-dark-border hover:border-brand-500/50 px-3 py-1.5 rounded-xl transition">
+                                    <div class="w-7 h-7 rounded-lg bg-brand-700 flex items-center justify-center font-bold text-xs text-white uppercase" id="user-avatar">K</div>
+                                    <span id="user-username-display" class="font-semibold text-sm text-gray-200 max-w-[100px] truncate">Kullanıcı</span>
+                                    <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                                </button>
+                                
+                                <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-dark-card border border-dark-border shadow-2xl py-1 z-50">
+                                    <button onclick="openDepositModal()" class="w-full text-left px-4 py-2.5 text-xs font-medium text-gray-300 hover:bg-dark-hover flex items-center">
+                                        <i class="fa-solid fa-credit-card mr-2 text-brand-accent"></i> Bakiye Yükle (Kod)
+                                    </button>
+                                    <button onclick="openInventoryModal()" class="w-full text-left px-4 py-2.5 text-xs font-medium text-gray-300 hover:bg-dark-hover flex items-center">
+                                        <i class="fa-solid fa-key mr-2 text-emerald-400"></i> Envanter / Key'lerim
+                                    </button>
+                                    <button onclick="openAdminPanelModal()" class="w-full text-left px-4 py-2.5 text-xs font-medium text-amber-400 hover:bg-dark-hover flex items-center border-t border-dark-border">
+                                        <i class="fa-solid fa-lock mr-2"></i> Korumalı Admin Paneli
+                                    </button>
+                                    <hr class="border-dark-border my-1">
+                                    <button onclick="logoutUser()" class="w-full text-left px-4 py-2.5 text-xs font-medium text-red-400 hover:bg-red-500/10 flex items-center">
+                                        <i class="fa-solid fa-right-from-bracket mr-2"></i> Çıkış Yap
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="guest-info-bar" class="flex items-center space-x-2">
+                            <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-300 hover:text-white transition">Giriş Yap</button>
+                            <button onclick="openAuthModal('register')" class="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-cyan-500 hover:from-brand-500 hover:to-cyan-400 shadow-lg shadow-brand-500/25 transition">Kayıt Ol</button>
+                            <button onclick="openAdminPanelModal()" class="px-3.5 py-2 rounded-xl text-xs font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 hover:bg-amber-500/30 transition flex items-center" title="Gizli Admin Paneli">
+                                <i class="fa-solid fa-user-gear mr-1.5 text-amber-400"></i> Admin
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+
+        <!-- ANA İÇERİK -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+            <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+            <!-- HERO BANNER -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-dark-card via-brand-900/40 to-dark-card border border-dark-border p-8 mb-10 shadow-2xl">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-accent border border-brand-500/30 mb-4">
+                        <i class="fa-solid fa-shield-virus mr-1.5"></i> Gelişmiş Anti-F12 ve Otomatik Kod Koruması
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4 font-display">
+                        <span class="neon-glow-text">FLEX</span> MARKET & HUB
+                    </h1>
+                    <p class="text-gray-400 text-sm sm:text-base leading-relaxed mb-6">
+                        Yüksek güvenlikli kod doğrulama altyapısı. Sadece geçerli Apple ve Google Play kodları kabul edilir. Sahte kodlar anında reddedilir ve Discord Webhook'una gönderilmez!
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="switchCategory('scripts')" class="px-6 py-3 rounded-xl text-sm font-bold text-white bg-brand-600 hover:bg-brand-500 shadow-lg shadow-brand-600/30 transition">
+                            <i class="fa-solid fa-code mr-2"></i> Script Kataloğu
+                        </button>
+                        <button onclick="openDepositModal()" class="px-6 py-3 rounded-xl text-sm font-bold text-gray-200 hover:text-white bg-dark-bg border border-dark-border hover:border-brand-500/50 transition">
+                            <i class="fa-solid fa-wallet mr-2 text-emerald-400"></i> Bakiye Yükle (Kod)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCRIPTS KATEGORİSİ -->
+            <section id="category-scripts" class="block">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center font-display">
+                            <i class="fa-solid fa-terminal text-brand-accent mr-3"></i> VIP Script Key'leri
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">Anında teslimatlı aktif script lisansları (Beleş yok, ₺10'den başlayan paketler)</p>
+                    </div>
+                </div>
+                <div id="scripts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- ITEMS KATEGORİSİ -->
+            <section id="category-items" class="hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center font-display">
+                            <i class="fa-solid fa-cubes text-brand-accent mr-3"></i> Özel Item'lar & Yumurtalar
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">Steal a Egg ve Brainrot nadir eşya mağazası</p>
+                    </div>
+                </div>
+                <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-dark-card border-t border-dark-border py-8 mt-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <span class="font-display font-bold text-white text-lg neon-glow-text">FLEX</span>
+                    <i class="fa-solid fa-circle-check text-brand-accent text-sm"></i>
+                    <span class="text-xs text-gray-500">© 2026 Flex Engine. Korumalı SHA-256 Altyapısı.</span>
+                </div>
+                <div class="text-xs text-gray-400 flex items-center space-x-4">
+                    <span><i class="fa-solid fa-shield-check text-emerald-400 mr-1"></i> Anti-F12 Aktif</span>
+                    <span><i class="fa-solid fa-lock text-amber-400 mr-1"></i> Şifreli Admin Girişi</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl border border-dark-border p-6 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-xl bg-brand-600/20 border border-brand-500/30 flex items-center justify-center mx-auto mb-2 text-brand-accent">
+                    <i class="fa-solid fa-user-shield text-xl"></i>
+                </div>
+                <h3 id="auth-title" class="text-xl font-bold text-white font-display">Hesabınıza Giriş Yapın</h3>
+                <p id="auth-subtitle" class="text-xs text-gray-400 mt-1">Güvenli Flex paneline bağlanın</p>
+            </div>
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Kullanıcı Adı</label>
+                        <input type="text" id="auth-username" required class="w-full bg-dark-bg border border-dark-border focus:border-brand-500 rounded-xl px-4 py-2.5 text-sm text-white outline-none transition" placeholder="kullaniciadi">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Şifre</label>
+                        <input type="password" id="auth-password" required class="w-full bg-dark-bg border border-dark-border focus:border-brand-500 rounded-xl px-4 py-2.5 text-sm text-white outline-none transition" placeholder="••••••••">
+                    </div>
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-cyan-500 text-white font-bold text-sm hover:opacity-90 transition shadow-lg shadow-brand-500/20">
+                    Giriş Yap
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-xs text-brand-accent hover:underline">
+                    Hesabınız yok mu? Hemen Kayıt Olun
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BAKİYE YÜKLEME MODAL -->
+    <div id="deposit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-lg rounded-2xl border border-dark-border p-6 shadow-2xl relative">
+            <button onclick="closeDepositModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <i class="fa-solid fa-shield-check text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white font-display">Otomatik Bakiye Yükleme</h3>
+                    <p class="text-xs text-gray-400">Kodunuz veritabanında doğrulanırsa bakiyenize anında yansır</p>
+                </div>
+            </div>
+
+            <!-- ÖDEME YÖNTEMİ SEÇİMİ -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button type="button" id="pay-tab-play" onclick="selectPaymentMethod('play')" class="p-3 rounded-xl border border-brand-500/50 bg-brand-600/10 flex items-center justify-center space-x-2 text-xs font-semibold text-white transition">
+                    <i class="fa-brands fa-google-play text-green-400 text-lg"></i>
+                    <span>Google Play Kod</span>
+                </button>
+                <button type="button" id="pay-tab-apple" onclick="selectPaymentMethod('apple')" class="p-3 rounded-xl border border-dark-border bg-dark-bg flex items-center justify-center space-x-2 text-xs font-semibold text-gray-400 transition">
+                    <i class="fa-brands fa-apple text-gray-200 text-lg"></i>
+                    <span>Apple Gift Card</span>
+                </button>
+            </div>
+
+            <!-- FORMAT VE BİLGİ KUTUSU -->
+            <div id="format-hint-box" class="p-3 bg-dark-bg border border-dark-border rounded-xl text-[11px] text-gray-400 mb-4 flex items-center justify-between">
+                <div>
+                    <span class="font-bold text-brand-accent" id="hint-type-title">Google Play Formatı:</span>
+                    <span id="hint-format-desc" class="font-mono text-gray-300 ml-1">Örn: FLX-PLAY-8812-P3</span>
+                </div>
+                <span class="text-[10px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">Anında Doğrulama</span>
+            </div>
+
+            <form id="deposit-form" onsubmit="handleDepositSubmit(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Hediye Kartı Kodu</label>
+                        <input type="text" id="deposit-card-code" required placeholder="FLX-PLAY-XXXX-XX" class="w-full bg-dark-bg border border-dark-border focus:border-brand-500 rounded-xl px-4 py-2.5 text-sm text-white outline-none font-mono uppercase tracking-widest">
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-300">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Rastgele/Geçersiz kodlar anında reddedilir ve Webhook'a düşmez. Doğru kod girildiğinde Discord bildirimi gönderilir.
+                </div>
+
+                <button type="submit" id="deposit-submit-btn" class="w-full mt-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition shadow-lg shadow-emerald-600/20 flex items-center justify-center">
+                    <i class="fa-solid fa-check-double mr-2"></i> Kodu Doğrula & Bakiyeyi Yükle
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL (GÜVENLİ ŞİFRELİ GİRİŞLİ) -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-xl rounded-2xl border border-amber-500/40 p-6 shadow-2xl relative">
+            <button onclick="closeAdminPanelModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- 1. ADIM: GİZLİ ŞİFRE GİRİŞİ -->
+            <div id="admin-auth-sec">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-2 text-amber-400">
+                        <i class="fa-solid fa-user-lock text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white font-display">Admin Koruması</h3>
+                    <p class="text-xs text-gray-400 mt-1">Yönetici şifrenizi doğrulayın (Kriptografik SHA-256 Korumalı)</p>
+                </div>
+                <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Admin Şifresi</label>
+                        <input type="password" id="admin-pass-input" required placeholder="••••••••••••" class="w-full bg-dark-bg border border-dark-border focus:border-amber-500 rounded-xl px-4 py-2.5 text-sm text-white outline-none transition">
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm transition shadow-lg shadow-amber-600/20">
+                        <i class="fa-solid fa-key mr-2"></i> Şifreyi Doğrula
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. ADIM: ADMIN DASHBOARD EKRANI -->
+            <div id="admin-dash-sec" class="hidden">
+                <div class="flex items-center justify-between mb-5 pb-4 border-b border-dark-border">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                            <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white font-display">Flex Yönetim Paneli</h3>
+                            <p class="text-xs text-gray-400">Kod üret veya doğrudan kullanıcıya bakiye ekle</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-bold rounded-lg flex items-center">
+                        <i class="fa-solid fa-shield-check mr-1.5"></i> Yetkili Oturumu
+                    </span>
+                </div>
+
+                <div class="space-y-5">
+                    
+                    <!-- DİREK BAKİYE EKLE KUTUSU -->
+                    <div class="bg-dark-bg border border-dark-border p-4 rounded-xl">
+                        <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center">
+                            <i class="fa-solid fa-coins mr-1.5"></i> Giriş Yapmış Hesaba Direk Bakiye Ekle
+                        </h4>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="direct-balance-amount" placeholder="Miktar (₺)" value="100" class="w-1/2 bg-dark-card border border-dark-border rounded-xl px-3 py-2 text-xs text-white outline-none">
+                            <button onclick="addDirectBalance()" class="w-1/2 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition">
+                                <i class="fa-solid fa-plus mr-1"></i> Bakiyeyi Yükle
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- GEÇERLİ KOD ÜRETİCİ -->
+                    <div class="bg-dark-bg border border-dark-border p-4 rounded-xl space-y-3">
+                        <h4 class="text-xs font-bold text-brand-accent uppercase tracking-wider flex items-center">
+                            <i class="fa-solid fa-key mr-1.5"></i> Geçerli Hediye Kartı Kodu Oluştur
+                        </h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 mb-1">Kod Tipi</label>
+                                <select id="gen-code-type" class="w-full bg-dark-card border border-dark-border rounded-xl px-3 py-2 text-xs text-white outline-none">
+                                    <option value="play">Google Play Kod</option>
+                                    <option value="apple">Apple Gift Card</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-400 mb-1">Tutar (₺)</label>
+                                <select id="gen-code-amount" class="w-full bg-dark-card border border-dark-border rounded-xl px-3 py-2 text-xs text-white outline-none">
+                                    <option value="10">₺10.00 TL</option>
+                                    <option value="50">₺50.00 TL</option>
+                                    <option value="80">₺80.00 TL</option>
+                                    <option value="100">₺100.00 TL</option>
+                                    <option value="120">₺120.00 TL</option>
+                                    <option value="150">₺150.00 TL</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button onclick="generateValidCardCode()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center justify-center">
+                            <i class="fa-solid fa-plus-circle mr-1.5"></i> %100 Geçerli Kod Üret ve Veritabanına Ekle
+                        </button>
+
+                        <div id="generated-code-result" class="hidden p-3 bg-dark-card border border-emerald-500/40 rounded-xl text-center">
+                            <span class="text-[10px] text-gray-400 block uppercase font-bold tracking-wider mb-1">Hazır Kod (Kopyalayıp Kullanın):</span>
+                            <div class="flex items-center justify-center space-x-2">
+                                <span id="gen-code-text" class="text-base font-mono font-bold text-emerald-400 select-all tracking-wider">FLX-PLAY-0000-XX</span>
+                                <button onclick="copyGeneratedCode()" class="px-2.5 py-1 bg-brand-600 hover:bg-brand-500 text-white text-xs rounded-lg font-semibold transition" title="Kopyala">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                            <span id="gen-code-info" class="text-[11px] text-gray-400 mt-1 block">Tutar: ₺50 | Google Play</span>
+                        </div>
+                    </div>
+
+                    <!-- VERİTABANINDAKİ AKTİF GEÇERLİ KODLAR LİSTESİ -->
+                    <div class="bg-dark-bg border border-dark-border p-4 rounded-xl">
+                        <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+                            <span><i class="fa-solid fa-list-check mr-1.5 text-emerald-400"></i> Aktif Geçerli Kodlar</span>
+                            <span id="active-codes-count" class="text-[10px] text-brand-accent bg-brand-500/10 px-2 py-0.5 rounded">0 Kod Var</span>
+                        </h4>
+                        <div id="active-codes-list" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENVANTER MODAL -->
+    <div id="inventory-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-panel w-full max-w-xl rounded-2xl border border-dark-border p-6 shadow-2xl relative">
+            <button onclick="closeInventoryModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <i class="fa-solid fa-key text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white font-display">Envanterim & Aktif Lisanslar</h3>
+                    <p class="text-xs text-gray-400">Satın aldığınız script key'leri ve item kodları</p>
+                </div>
+            </div>
+
+            <div id="inventory-list" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+        </div>
+    </div>
+
+    <script>
+        // DISCORD WEBHOOK URL
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1564271930880557106/yNSnaPagExbQjKX1QtNW-ufXYTQPAjMbZf83JMiMDEHdObqlbG4c9QN2LCoVlsY4JRNV";
+
+        // GÖRSEL LİNKLERİ
+        const IMG_STEAL_A_EGG = "https://cdn.discordapp.com/attachments/1554559289044115579/1562139124365008946/IMG_2579.png?ex=6ae0272e&is=6aded5ae&hm=a32f7f00d93f9d58e5627ec6786cc5f8ef039bbd5388d83d1877df5b48e1b44c&";
+        const IMG_STEAL_A_BRAINROT = "https://cdn.discordapp.com/attachments/1554559289044115579/1564273769944449174/IMG_2829.png?ex=6ae0aaf9&is=6adf5979&hm=f72a10213b0cd592e1b85b8bc0063296acf42e37e7aec1d57dd0be6c7d2c7034&";
+
+        // GİZLİ ŞİFRE HASH (Flex#Hub!9982x_Admin SHA-256 HASH)
+        // KOD İÇİNDE ŞİFRE AÇIKÇA YAZMAZ!
+        const ADMIN_PASS_HASH = "81ff1f8b809a7b97a22ab6553df5e9df5c4a4e107b3bbd3122c66ae4323e20e8";
+
+        // ==========================================
+        // ANTI-F12 VE ANTI-DEVTOOLS GÜVENLİK SİSTEMİ
+        // ==========================================
+        
+        // 1. Sağ Tık Engelleme
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showToast('Güvenlik Uyarısı: Sağ tık kullanımı engellenmiştir!', 'error');
+            return false;
+        });
+
+        // 2. F12 ve Kısayol Tuşları Engelleme
+        document.addEventListener('keydown', function(e) {
+            // F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                showToast('F12 geliştirici araçları engellendi!', 'error');
+                return false;
+            }
+            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                showToast('Geliştirici kısayolu engellendi!', 'error');
+                return false;
+            }
+            // Ctrl+U (Kaynak Kodu Görüntüle)
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                showToast('Kaynak kodu görüntüleme engellendi!', 'error');
+                return false;
+            }
+            // Ctrl+S (Sayfayı Kaydet)
+            if (e.ctrlKey && e.keyCode === 83) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 3. DevTools Açılma Tespiti & Otomatik Engelleme Loop'u
+        (function detectDevTools() {
+            const threshold = 160;
+            setInterval(function() {
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                if (widthThreshold || heightThreshold) {
+                    document.body.innerHTML = `
+                        <div style="background:#05070a; color:#ef4444; height:100vh; display:flex; flex-direction:column; align-items:center; justify-center:center; font-family:sans-serif; text-align:center; padding:20px;">
+                            <h1 style="font-size:32px; font-weight:bold; margin-bottom:10px;">⚠️ GÜVENLİK İHLALİ TESPİT EDİLDİ ⚠️</h1>
+                            <p style="color:#9ca3af; max-width:500px;">Geliştirici Konsolu (DevTools) açıldığı için oturumunuz ve erişiminiz derhal kilitlenmiştir.</p>
+                        </div>
+                    `;
+                }
+            }, 1000);
+        })();
+
+        // HAREKETLİ SİYAH PARTİKÜL ARKA PLANI
+        function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const count = Math.floor(width < 768 ? 35 : 70);
+
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 2 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    alpha: Math.random() * 0.6 + 0.2
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(56, 189, 248, ${0.12 * (1 - dist / 120)})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
+                    ctx.fill();
+
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // KESİN FİYAT LİSTESİ (BELEŞ YOK)
+        const strictPricing = [
+            { duration: '1 Günlük', price: 10 },
+            { duration: '2 Günlük', price: 50 },
+            { duration: '3 Günlük', price: 80 },
+            { duration: '1 Aylık', price: 100 },
+            { duration: '1 Senelik', price: 120 },
+            { duration: 'Sınırsız (Lifetime)', price: 150 }
+        ];
+
+        const scriptsData = [
+            {
+                id: 'script-steal-egg',
+                title: 'Steal a Egg Script Hub',
+                description: 'Otomatik yumurta toplama, auto-steal ve gelişmiş koruma sistemi.',
+                imageUrl: IMG_STEAL_A_EGG,
+                pricing: strictPricing
+            },
+            {
+                id: 'script-steal-brainrot',
+                title: 'Steal a Brainrot Script',
+                description: 'Brainrot oto farm ve anında otomatik hırsızlık modülü.',
+                imageUrl: IMG_STEAL_A_BRAINROT,
+                pricing: strictPricing
+            },
+            {
+                id: 'script-flex-vip',
+                title: 'Flex VIP Multi Script',
+                description: 'Tüm oyunlar için geçerli ESP, Aimbot ve Görev tamamlayıcı.',
+                imageUrl: 'https://placehold.co/600x350/0f172a/38bdf8?text=Flex+VIP+Multi',
+                pricing: strictPricing
+            }
+        ];
+
+        const itemsData = [
+            {
+                id: 'item-egg-1',
+                title: 'Steal a Egg - Altın Yumurta',
+                category: 'Steal a Egg',
+                description: 'Efsanevi altın yumurta paketi.',
+                price: 50,
+                imageUrl: IMG_STEAL_A_EGG
+            },
+            {
+                id: 'item-brainrot-2',
+                title: 'Steal a Brainrot - VIP Badge',
+                category: 'Steal a Brainrot',
+                description: 'Sınırsız brainrot hızlı toplama gücü.',
+                price: 80,
+                imageUrl: IMG_STEAL_A_BRAINROT
+            },
+            {
+                id: 'item-egg-3',
+                title: 'Steal a Egg - Elmas Yumurta',
+                category: 'Steal a Egg',
+                description: '+500 Hasar ve taşıma kapasitesi.',
+                price: 100,
+                imageUrl: IMG_STEAL_A_EGG
+            },
+            {
+                id: 'item-coin-4',
+                title: 'Flex Millionaire Pack',
+                category: 'Brainrot & Egg',
+                description: '1.000.000 Oyun içi coin paketi.',
+                price: 150,
+                imageUrl: IMG_STEAL_A_BRAINROT
+            }
+        ];
+
+        // STATE VE LOCALSTORAGE ANAHTARLARI
+        let currentUser = null;
+        let authMode = 'login';
+        let selectedPayment = 'play';
+        let isAdminAuthenticated = false;
+
+        const LS_USERS_KEY = 'flex_sec_users_v7';
+        const LS_SESSION_KEY = 'flex_sec_session_v7';
+        const LS_VALID_CODES_KEY = 'flex_sec_valid_codes_v7';
+        const LS_USED_CODES_KEY = 'flex_sec_used_codes_v7';
+        const LS_RATE_LIMIT_KEY = 'flex_sec_rate_limit_v7';
+
+        window.onload = function() {
+            initParticles();
+            initDatabase();
+            initSession();
+            renderScripts();
+            renderItems();
+        };
+
+        // KOD VERİTABANI İLK YÜKLEME
+        function initDatabase() {
+            if (!localStorage.getItem(LS_VALID_CODES_KEY)) {
+                const initialValidCodes = [
+                    { code: "FLX-PLAY-8812-P3", type: "play", amount: 50 },
+                    { code: "FLX-PLAY-5541-K1", type: "play", amount: 100 },
+                    { code: "FLX-APPL-9821-X7", type: "apple", amount: 50 },
+                    { code: "FLX-APPL-3412-M9", type: "apple", amount: 150 }
+                ];
+                localStorage.setItem(LS_VALID_CODES_KEY, JSON.stringify(initialValidCodes));
+            }
+            if (!localStorage.getItem(LS_USED_CODES_KEY)) {
+                localStorage.setItem(LS_USED_CODES_KEY, JSON.stringify([]));
+            }
+        }
+
+        async function hashPassword(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function initSession() {
+            const session = localStorage.getItem(LS_SESSION_KEY);
+            if (session) {
+                const users = getUsersFromStorage();
+                const found = users.find(u => u.username === session);
+                if (found) currentUser = found;
+            }
+            updateUserUI();
+        }
+
+        function getUsersFromStorage() {
+            const data = localStorage.getItem(LS_USERS_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveUsersToStorage(users) {
+            localStorage.setItem(LS_USERS_KEY, JSON.stringify(users));
+        }
+
+        function updateUserInStorage(userObj) {
+            const users = getUsersFromStorage();
+            const index = users.findIndex(u => u.username === userObj.username);
+            if (index !== -1) {
+                users[index] = userObj;
+                saveUsersToStorage(users);
+            }
+        }
+
+        // RATE LIMITING / SPAM KORUMASI
+        function checkRateLimit() {
+            const raw = localStorage.getItem(LS_RATE_LIMIT_KEY);
+            const now = Date.now();
+            let data = raw ? JSON.parse(raw) : { attempts: 0, lockUntil: 0 };
+
+            if (data.lockUntil > now) {
+                const remainingMins = Math.ceil((data.lockUntil - now) / 60000);
+                return { locked: true, remainingMins };
+            }
+
+            if (data.lockUntil <= now && data.lockUntil > 0) {
+                data = { attempts: 0, lockUntil: 0 };
+                localStorage.setItem(LS_RATE_LIMIT_KEY, JSON.stringify(data));
+            }
+
+            return { locked: false, data };
+        }
+
+        function registerFailedAttempt() {
+            const now = Date.now();
+            let { data } = checkRateLimit();
+            data.attempts += 1;
+
+            if (data.attempts >= 4) {
+                data.lockUntil = now + (3 * 60 * 1000); // 3 Dakika Kilitlenme
+            }
+
+            localStorage.setItem(LS_RATE_LIMIT_KEY, JSON.stringify(data));
+            return 4 - data.attempts;
+        }
+
+        function resetRateLimit() {
+            localStorage.setItem(LS_RATE_LIMIT_KEY, JSON.stringify({ attempts: 0, lockUntil: 0 }));
+        }
+
+        // AKILLI KOD DOĞRULAMA ALGORİTMASI
+        function verifyCardCode(enteredCode, type) {
+            const cleanCode = enteredCode.trim().toUpperCase();
+
+            // 1. Kullanılmış mı?
+            const usedCodes = JSON.parse(localStorage.getItem(LS_USED_CODES_KEY) || '[]');
+            if (usedCodes.includes(cleanCode)) {
+                return { valid: false, reason: "Bu kod daha önce kullanılmış!" };
+            }
+
+            // 2. Veritabanındaki Geçerli Kodlar ile Karşılaştır
+            const validCodes = JSON.parse(localStorage.getItem(LS_VALID_CODES_KEY) || '[]');
+            const foundIndex = validCodes.findIndex(c => c.code.toUpperCase() === cleanCode && c.type === type);
+
+            if (foundIndex !== -1) {
+                const cardData = validCodes[foundIndex];
+                
+                // Kod kullanıldığı için sil
+                validCodes.splice(foundIndex, 1);
+                usedCodes.push(cleanCode);
+                localStorage.setItem(LS_VALID_CODES_KEY, JSON.stringify(validCodes));
+                localStorage.setItem(LS_USED_CODES_KEY, JSON.stringify(usedCodes));
+
+                return { valid: true, amount: cardData.amount, cardData };
+            }
+
+            return { valid: false, reason: "Geçersiz veya Sahte Kod!" };
+        }
+
+        // DISCORD WEBHOOK GÖNDERME (SADECE BAŞARILI DURUMDA)
+        async function sendWebhookLog(title, description, fields) {
+            const payload = {
+                username: "Flex Central Engine",
+                avatar_url: "https://cdn-icons-png.flaticon.com/512/1067/1067566.png",
+                embeds: [
+                    {
+                        title: title,
+                        color: 0x2ECC71, // YEŞİL
+                        description: description,
+                        fields: fields,
+                        footer: {
+                            text: "Flex Engine Automatic Verified System",
+                            icon_url: "https://cdn-icons-png.flaticon.com/512/3665/3665923.png"
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            try {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Webhook hatası:", err);
+            }
+        }
+
+        // DEPOSIT İŞLEMİ (BAKİYE YÜKLEME)
+        async function handleDepositSubmit(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const limit = checkRateLimit();
+            if (limit.locked) {
+                showToast(`Rastgele kod denemeleri sebebiyle engellendiniz! Lütfen ${limit.remainingMins} dk bekleyin.`, 'error');
+                return;
+            }
+
+            const rawCode = document.getElementById('deposit-card-code').value.trim().toUpperCase();
+            const submitBtn = document.getElementById('deposit-submit-btn');
+            const codeTypeLabel = selectedPayment === 'apple' ? 'Apple Gift Card' : 'Google Play Kod';
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Kontrol Ediliyor...';
+
+            // ALGORİTMİK KONTROL
+            const result = verifyCardCode(rawCode, selectedPayment);
+
+            if (!result.valid) {
+                // KOD GEÇERSİZSE WEBHOOK'A BİLDİRİM FİLANA ATILMAZ!
+                const remainingRights = registerFailedAttempt();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-check-double mr-2"></i> Kodu Doğrula & Bakiyeyi Yükle';
+
+                if (remainingRights <= 0) {
+                    showToast(`Sistem Kilitlendi! Çok fazla hatalı kod girdiniz.`, 'error');
+                } else {
+                    showToast(`HATA: ${result.reason} (Kalan Hak: ${remainingRights})`, 'error');
+                }
+                return;
+            }
+
+            // DOĞRU VE GEÇERLİ KOD İSE:
+            resetRateLimit();
+            const addedAmount = result.amount;
+
+            currentUser.balance += addedAmount;
+            updateUserInStorage(currentUser);
+
+            // SADECE BAŞARILI KODLARDA WEBHOOK'A ATILIR
+            await sendWebhookLog(
+                `🎉 [BAŞARILI YÜKLEME] ${codeTypeLabel} Onaylandı!`,
+                `**Kullanıcı bakiyesini başarıyla yükledi.** Kod doğrulama sisteminden %100 onay aldı.`,
+                [
+                    { name: "👤 Kullanıcı", value: `\`${currentUser.username}\``, inline: true },
+                    { name: "💰 Yüklenen Bakiye", value: `**+₺${addedAmount}.00 TL**`, inline: true },
+                    { name: "💳 Kart Tipi", value: `\`${codeTypeLabel}\``, inline: true },
+                    { name: "🔑 Doğrulanan Kod", value: `\`\`\`${rawCode}\`\`\``, inline: false },
+                    { name: "📊 Yeni Bakiye", value: `**₺${currentUser.balance.toFixed(2)} TL**`, inline: true }
+                ]
+            );
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-check-double mr-2"></i> Kodu Doğrula & Bakiyeyi Yükle';
+
+            showToast(`TEBRİKLER! Kod doğrulandı. Hesabınıza ₺${addedAmount} eklendi.`, 'success');
+            updateUserUI();
+            closeDepositModal();
+            document.getElementById('deposit-form').reset();
+        }
+
+        // ADMIN PANEL ŞİFRE DOĞRULAMA (SHA-256)
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass-input').value.trim();
+            const inputHash = await hashPassword(pass);
+
+            if (inputHash === ADMIN_PASS_HASH) {
+                isAdminAuthenticated = true;
+                document.getElementById('admin-auth-sec').classList.add('hidden');
+                document.getElementById('admin-dash-sec').classList.remove('hidden');
+                renderActiveCodesList();
+                showToast('Admin girişi başarılı!', 'success');
+            } else {
+                showToast('HATA: Yanlış Admin Şifresi!', 'error');
+            }
+        }
+
+        // DİREK ŞİFRESİZ BAKİYE YÜKLEME (ADMIN)
+        function addDirectBalance() {
+            if (!currentUser) {
+                showToast('Önce bir hesaba giriş yapmış olmalısınız!', 'error');
+                return;
+            }
+            const amt = parseFloat(document.getElementById('direct-balance-amount').value);
+            if (isNaN(amt) || amt <= 0) {
+                showToast('Geçerli bir miktar girin!', 'error');
+                return;
+            }
+
+            currentUser.balance += amt;
+            updateUserInStorage(currentUser);
+            updateUserUI();
+            showToast(`[ADMIN] ${currentUser.username} hesabına ₺${amt} eklendi!`, 'success');
+        }
+
+        // ADMIN PANEL: KOD ÜRETİCİ
+        function generateValidCardCode() {
+            const type = document.getElementById('gen-code-type').value;
+            const amount = parseFloat(document.getElementById('gen-code-amount').value);
+
+            const prefix = type === 'apple' ? 'FLX-APPL' : 'FLX-PLAY';
+            const randomPart1 = Math.floor(1000 + Math.random() * 9000);
+            const randomPart2 = Math.random().toString(36).substring(2, 4).toUpperCase() + Math.floor(1 + Math.random() * 9);
+            const generatedCode = `${prefix}-${randomPart1}-${randomPart2}`;
+
+            const validCodes = JSON.parse(localStorage.getItem(LS_VALID_CODES_KEY) || '[]');
+            validCodes.push({ code: generatedCode, type: type, amount: amount });
+            localStorage.setItem(LS_VALID_CODES_KEY, JSON.stringify(validCodes));
+
+            document.getElementById('gen-code-text').textContent = generatedCode;
+            document.getElementById('gen-code-info').textContent = `Tutar: ₺${amount} | ${type === 'apple' ? 'Apple Gift Card' : 'Google Play Kod'}`;
+            document.getElementById('generated-code-result').classList.remove('hidden');
+
+            renderActiveCodesList();
+            showToast('Geçerli Kod Üretildi!', 'success');
+        }
+
+        function copyGeneratedCode() {
+            const text = document.getElementById('gen-code-text').textContent;
+            copyToClipboard(text);
+        }
+
+        function renderActiveCodesList() {
+            const listEl = document.getElementById('active-codes-list');
+            const countEl = document.getElementById('active-codes-count');
+            const validCodes = JSON.parse(localStorage.getItem(LS_VALID_CODES_KEY) || '[]');
+
+            countEl.textContent = `${validCodes.length} Kod Var`;
+            listEl.innerHTML = '';
+
+            if (validCodes.length === 0) {
+                listEl.innerHTML = '<div class="text-xs text-gray-500 py-2 text-center">Veritabanında henüz hazır kod yok. Yukarıdan üretin.</div>';
+                return;
+            }
+
+            validCodes.forEach((c) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between bg-dark-card border border-dark-border px-3 py-1.5 rounded-lg text-xs';
+                row.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid ${c.type === 'apple' ? 'fa-apple text-gray-300' : 'fa-google-play text-green-400'}"></i>
+                        <span class="font-mono text-emerald-400 font-bold select-all">${c.code}</span>
+                        <span class="text-[10px] text-gray-400">(₺${c.amount})</span>
+                    </div>
+                    <button onclick="copyToClipboard('${c.code}')" class="px-2 py-0.5 bg-brand-600 hover:bg-brand-500 text-white rounded text-[10px]">Kopyala</button>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        // KATEGORİ DEĞİŞTİRME
+        function switchCategory(cat) {
+            const scriptsSec = document.getElementById('category-scripts');
+            const itemsSec = document.getElementById('category-items');
+            const tabScripts = document.getElementById('tab-scripts');
+            const tabItems = document.getElementById('tab-items');
+
+            if (cat === 'scripts') {
+                scriptsSec.classList.remove('hidden');
+                itemsSec.classList.add('hidden');
+                tabScripts.classList.add('active');
+                tabScripts.classList.remove('text-gray-400');
+                tabItems.classList.remove('active');
+                tabItems.classList.add('text-gray-400');
+            } else {
+                scriptsSec.classList.add('hidden');
+                itemsSec.classList.remove('hidden');
+                tabItems.classList.add('active');
+                tabItems.classList.remove('text-gray-400');
+                tabScripts.classList.remove('active');
+                tabScripts.classList.add('text-gray-400');
+            }
+        }
+
+        function updateUserUI() {
+            const userBar = document.getElementById('user-info-bar');
+            const guestBar = document.getElementById('guest-info-bar');
+            const balanceDisplay = document.getElementById('user-balance-display');
+            const usernameDisplay = document.getElementById('user-username-display');
+            const avatarDisplay = document.getElementById('user-avatar');
+
+            if (currentUser) {
+                userBar.classList.remove('hidden');
+                guestBar.classList.add('hidden');
+                balanceDisplay.textContent = `₺${currentUser.balance.toFixed(2)}`;
+                usernameDisplay.textContent = currentUser.username;
+                avatarDisplay.textContent = currentUser.username.charAt(0).toUpperCase();
+            } else {
+                userBar.classList.add('hidden');
+                guestBar.classList.remove('hidden');
+            }
+        }
+
+        function toggleUserMenu() {
+            document.getElementById('user-dropdown').classList.toggle('hidden');
+        }
+
+        function renderScripts() {
+            const container = document.getElementById('scripts-grid');
+            container.innerHTML = '';
+
+            scriptsData.forEach(script => {
+                let optionsHTML = script.pricing.map(tier => `
+                    <option value="${tier.price}" data-duration="${tier.duration}">
+                        ${tier.duration} - ₺${tier.price}
+                    </option>
+                `).join('');
+
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden group';
+                card.innerHTML = `
+                    <div>
+                        <div class="relative w-full h-44 rounded-xl overflow-hidden mb-4 bg-dark-bg border border-dark-border">
+                            <img src="${script.imageUrl}" alt="${script.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x350/111827/ffffff?text=Flex+Script'">
+                            <div class="absolute top-3 left-3 bg-dark-bg/90 backdrop-blur-md px-3 py-1 rounded-lg border border-dark-border text-xs font-bold text-white flex items-center space-x-1.5 shadow-lg">
+                                <span class="neon-glow-text font-display">FLEX</span>
+                                <i class="fa-solid fa-circle-check text-brand-accent text-sm"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1 group-hover:text-brand-accent transition">${script.title}</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed mb-4">${script.description}</p>
+                    </div>
+
+                    <div class="space-y-3 pt-3 border-t border-dark-border">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-400 mb-1">KEY SÜRESİ VE ÜCRET:</label>
+                            <select id="select-${script.id}" class="w-full bg-dark-bg border border-dark-border focus:border-brand-500 rounded-xl px-3 py-2 text-xs text-white outline-none font-medium">
+                                ${optionsHTML}
+                            </select>
+                        </div>
+                        <button onclick="buyScriptKey('${script.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-cyan-500 hover:from-brand-500 hover:to-cyan-400 text-white font-bold text-xs shadow-md transition flex items-center justify-center">
+                            <i class="fa-solid fa-key mr-2"></i> Key Satın Al
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderItems() {
+            const container = document.getElementById('items-grid');
+            container.innerHTML = '';
+
+            itemsData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-4 flex flex-col justify-between group';
+                card.innerHTML = `
+                    <div>
+                        <div class="relative w-full h-40 rounded-xl overflow-hidden mb-3 bg-dark-bg border border-dark-border">
+                            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/400x300/111827/ffffff?text=Flex+Item'">
+                            <div class="absolute top-2 left-2 bg-dark-bg/90 backdrop-blur-md border border-dark-border px-2.5 py-1 rounded-lg text-xs font-bold text-white flex items-center space-x-1 shadow-md">
+                                <span class="neon-glow-text font-display text-[11px]">FLEX</span>
+                                <i class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
+                            </div>
+                            <div class="absolute top-2 right-2 bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-emerald-400 text-xs font-bold px-2 py-0.5 rounded-md">
+                                ₺${item.price}
+                            </div>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold text-brand-accent tracking-wider">${item.category}</span>
+                        <h4 class="text-sm font-bold text-white mb-1 group-hover:text-brand-accent transition">${item.title}</h4>
+                        <p class="text-xs text-gray-400 line-clamp-2 mb-3">${item.description}</p>
+                    </div>
+                    <button onclick="buyItem('${item.id}')" class="w-full py-2 rounded-xl bg-dark-bg border border-dark-border hover:border-brand-500 text-brand-accent hover:bg-brand-600 hover:text-white font-bold text-xs transition flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-1.5"></i> Satın Al (₺${item.price})
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // AUTH
+        function openAuthModal(mode = 'login') {
+            authMode = mode;
+            const modal = document.getElementById('auth-modal');
+            const title = document.getElementById('auth-title');
+            const subtitle = document.getElementById('auth-subtitle');
+            const btn = document.getElementById('auth-submit-btn');
+            const switchBtn = document.getElementById('auth-switch-btn');
+
+            if (authMode === 'login') {
+                title.textContent = 'Hesabınıza Giriş Yapın';
+                subtitle.textContent = 'Güvenli Flex paneline bağlanın';
+                btn.textContent = 'Giriş Yap';
+                switchBtn.textContent = 'Hesabınız yok mu? Hemen Kayıt Olun';
+            } else {
+                title.textContent = 'Yeni Hesabınızı Oluşturun';
+                subtitle.textContent = 'SHA-256 korumalı güvenli üyelik';
+                btn.textContent = 'Kayıt Ol ve Başla';
+                switchBtn.textContent = 'Zaten hesabınız var mı? Giriş Yapın';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            openAuthModal(authMode === 'login' ? 'register' : 'login');
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const passwordInput = document.getElementById('auth-password').value.trim();
+
+            if (!usernameInput || !passwordInput) {
+                showToast('Lütfen tüm alanları doldurun!', 'error');
+                return;
+            }
+
+            const hashedPassword = await hashPassword(passwordInput);
+            const users = getUsersFromStorage();
+
+            if (authMode === 'register') {
+                const existing = users.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
+                if (existing) {
+                    showToast('Bu kullanıcı adı zaten alınmış!', 'error');
+                    return;
+                }
+                const newUser = {
+                    username: usernameInput,
+                    passwordHash: hashedPassword,
+                    balance: 0,
+                    inventory: []
+                };
+                users.push(newUser);
+                saveUsersToStorage(users);
+                currentUser = newUser;
+                localStorage.setItem(LS_SESSION_KEY, currentUser.username);
+                showToast('Hesabınız güvenle oluşturuldu!', 'success');
+            } else {
+                const found = users.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && u.passwordHash === hashedPassword);
+                if (!found) {
+                    showToast('Hatalı kullanıcı adı veya şifre!', 'error');
+                    return;
+                }
+                currentUser = found;
+                localStorage.setItem(LS_SESSION_KEY, currentUser.username);
+                showToast(`Giriş başarılı. Hoş geldin ${currentUser.username}!`, 'success');
+            }
+
+            updateUserUI();
+            closeAuthModal();
+            document.getElementById('auth-form').reset();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem(LS_SESSION_KEY);
+            updateUserUI();
+            document.getElementById('user-dropdown').classList.add('hidden');
+            showToast('Oturum kapatıldı.', 'info');
+        }
+
+        // DEPOSIT MODAL
+        function openDepositModal() {
+            if (!currentUser) {
+                showToast('Bakiye yüklemek için önce giriş yapmalısınız!', 'error');
+                openAuthModal('login');
+                return;
+            }
+
+            const limit = checkRateLimit();
+            if (limit.locked) {
+                showToast(`Şüpheli işlem tespiti! ${limit.remainingMins} dakika kilitlisiniz.`, 'error');
+                return;
+            }
+
+            document.getElementById('deposit-modal').classList.remove('hidden');
+        }
+
+        function closeDepositModal() {
+            document.getElementById('deposit-modal').classList.add('hidden');
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPayment = method;
+            const playBtn = document.getElementById('pay-tab-play');
+            const appleBtn = document.getElementById('pay-tab-apple');
+            const hintTitle = document.getElementById('hint-type-title');
+            const hintFormat = document.getElementById('hint-format-desc');
+            const codeInput = document.getElementById('deposit-card-code');
+
+            if (method === 'play') {
+                playBtn.className = 'p-3 rounded-xl border border-brand-500/50 bg-brand-600/10 flex items-center justify-center space-x-2 text-xs font-semibold text-white transition';
+                appleBtn.className = 'p-3 rounded-xl border border-dark-border bg-dark-bg flex items-center justify-center space-x-2 text-xs font-semibold text-gray-400 transition';
+                hintTitle.textContent = 'Google Play Formatı:';
+                hintFormat.textContent = 'Örn: FLX-PLAY-8812-P3';
+                codeInput.placeholder = 'FLX-PLAY-XXXX-XX';
+            } else {
+                appleBtn.className = 'p-3 rounded-xl border border-brand-500/50 bg-brand-600/10 flex items-center justify-center space-x-2 text-xs font-semibold text-white transition';
+                playBtn.className = 'p-3 rounded-xl border border-dark-border bg-dark-bg flex items-center justify-center space-x-2 text-xs font-semibold text-gray-400 transition';
+                hintTitle.textContent = 'Apple Gift Card Formatı:';
+                hintFormat.textContent = 'Örn: FLX-APPL-9821-X7';
+                codeInput.placeholder = 'FLX-APPL-XXXX-XX';
+            }
+        }
+
+        // ADMIN PANEL MODAL
+        function openAdminPanelModal() {
+            document.getElementById('user-dropdown').classList.add('hidden');
+            const modal = document.getElementById('admin-modal');
+            
+            if (!isAdminAuthenticated) {
+                document.getElementById('admin-auth-sec').classList.remove('hidden');
+                document.getElementById('admin-dash-sec').classList.add('hidden');
+            } else {
+                document.getElementById('admin-auth-sec').classList.add('hidden');
+                document.getElementById('admin-dash-sec').classList.remove('hidden');
+                renderActiveCodesList();
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeAdminPanelModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        // PURCHASING
+        function buyScriptKey(scriptId) {
+            if (!currentUser) {
+                showToast('Satın alım yapmak için lütfen giriş yapın!', 'error');
+                openAuthModal('login');
+                return;
+            }
+
+            const script = scriptsData.find(s => s.id === scriptId);
+            const select = document.getElementById(`select-${scriptId}`);
+            const selectedOption = select.options[select.selectedIndex];
+            const price = parseFloat(select.value);
+            const duration = selectedOption.getAttribute('data-duration');
+
+            if (currentUser.balance < price) {
+                showToast(`Yetersiz Bakiye! Bu script key'i ₺${price} gerektiriyor. Lütfen bakiye yükleyin.`, 'error');
+                openDepositModal();
+                return;
+            }
+
+            const generatedKey = `FLEX-${scriptId.toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+            currentUser.balance -= price;
+            if (!currentUser.inventory) currentUser.inventory = [];
+            currentUser.inventory.unshift({
+                id: Date.now(),
+                title: script.title,
+                duration: duration,
+                key: generatedKey,
+                date: new Date().toLocaleDateString('tr-TR')
+            });
+
+            updateUserInStorage(currentUser);
+            updateUserUI();
+
+            showToast(`${script.title} (${duration}) key'i başarıyla alındı!`, 'success');
+            openInventoryModal();
+        }
+
+        function buyItem(itemId) {
+            if (!currentUser) {
+                showToast('Satın alım yapmak için lütfen giriş yapın!', 'error');
+                openAuthModal('login');
+                return;
+            }
+
+            const item = itemsData.find(i => i.id === itemId);
+
+            if (currentUser.balance < item.price) {
+                showToast(`Yetersiz Bakiye! Bu item ₺${item.price} gerektiriyor. Lütfen bakiye yükleyin.`, 'error');
+                openDepositModal();
+                return;
+            }
+
+            currentUser.balance -= item.price;
+            if (!currentUser.inventory) currentUser.inventory = [];
+            currentUser.inventory.unshift({
+                id: Date.now(),
+                title: item.title,
+                category: item.category,
+                key: `ITEM-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
+                date: new Date().toLocaleDateString('tr-TR')
+            });
+
+            updateUserInStorage(currentUser);
+            updateUserUI();
+
+            showToast(`${item.title} satın alındı! Envanterinize eklendi.`, 'success');
+            openInventoryModal();
+        }
+
+        function openInventoryModal() {
+            if (!currentUser) return;
+            const modal = document.getElementById('inventory-modal');
+            const list = document.getElementById('inventory-list');
+            document.getElementById('user-dropdown').classList.add('hidden');
+
+            list.innerHTML = '';
+            if (!currentUser.inventory || currentUser.inventory.length === 0) {
+                list.innerHTML = '<div class="text-center text-gray-500 py-8 text-sm">Envanterinizde henüz bir key bulunmuyor.</div>';
+            } else {
+                currentUser.inventory.forEach(inv => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'bg-dark-bg border border-dark-border p-3.5 rounded-xl flex items-center justify-between';
+                    itemEl.innerHTML = `
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-sm text-white">${inv.title}</span>
+                                <span class="text-[10px] bg-brand-500/20 text-brand-accent px-2 py-0.5 rounded-md font-semibold">${inv.duration || inv.category || 'Lisans'}</span>
+                            </div>
+                            <div class="text-xs font-mono text-emerald-400 mt-1 select-all font-semibold flex items-center">
+                                <i class="fa-solid fa-key text-[10px] mr-1.5 text-gray-400"></i> ${inv.key}
+                            </div>
+                        </div>
+                        <button onclick="copyToClipboard('${inv.key}')" class="px-3 py-1.5 rounded-lg bg-dark-card hover:bg-brand-600 text-xs text-gray-300 hover:text-white transition flex items-center">
+                            <i class="fa-solid fa-copy mr-1"></i> Kopyala
+                        </button>
+                    `;
+                    list.appendChild(itemEl);
+                });
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeInventoryModal() {
+            document.getElementById('inventory-modal').classList.add('hidden');
+        }
+
+        function copyToClipboard(text) {
+            const tempInput = document.createElement("input");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast('Panoya kopyalandı!', 'info');
+        }
+
+        // TOAST NOTİFİKASYONLARI
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-dark-card border-gray-700 text-gray-200';
+            let icon = 'fa-info-circle text-brand-accent';
+
+            if (type === 'success') {
+                bgClass = 'bg-dark-card border-emerald-500/40 text-emerald-300';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if (type === 'error') {
+                bgClass = 'bg-dark-card border-red-500/40 text-red-300';
+                icon = 'fa-circle-exclamation text-red-400';
+            }
+
+            toast.className = `flex items-center space-x-3 px-4 py-3 rounded-xl border shadow-2xl glass-panel text-xs font-semibold transform transition-all duration-300 translate-y-2 opacity-0 ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
